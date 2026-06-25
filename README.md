@@ -129,4 +129,4 @@ This project is developed for educational purposes under the **CODSOFT AI Intern
 - OpenCV
 - Python
 - Tkinter
-- Pillow
+- Pillow# CODSOFT-05
