@@ -1,0 +1,41 @@
+REQUIREMENTS
+
+------------------------------------------------------------
+
+opencv-python
+
+pillow
+
+numpy
+
+------------------------------------------------------------
+
+DEVELOPER
+
+------------------------------------------------------------
+
+Developed by SHIKHAR UIKEY
+
+------------------------------------------------------------
+
+LICENSE
+
+------------------------------------------------------------
+
+This project was developed for educational purposes as part of the CODSOFT Artificial Intelligence Internship.
+
+------------------------------------------------------------
+
+ACKNOWLEDGEMENTS
+
+------------------------------------------------------------
+
+• CODSOFT
+
+• OpenCV
+
+• Python
+
+• Tkinter
+
+• Pillow
