@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f1016;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #ff007f;
+            --accent-glow: rgba(255, 0, 127, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #8892b0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 0, 127, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.08), transparent 25%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(90deg, #ff007f, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+            margin-top: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            margin-bottom: 50px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .upload-section:hover, .upload-section.dragover {
+            border-color: var(--accent);
+            background: rgba(255, 0, 127, 0.05);
+            box-shadow: 0 0 20px var(--accent-glow) inset;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .result-section {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .face-count {
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .image-container {
+            width: 100%;
+            flex-grow: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            display: none;
+            border-radius: 12px;
+        }
+
+        .placeholder-text {
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Face Detection Studio</h1>
+        <p class="subtitle">AI-Powered Vision. Upload an image to detect faces.</p>
+    </header>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="glass-panel" style="flex: 1; display: flex; flex-direction: column;">
+            <h2 style="font-size: 1.5rem; margin-top: 0; margin-bottom: 20px;">Upload Image</h2>
+            <div class="upload-section" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Click or drag image here</div>
+                <input type="file" id="file-input" accept="image/*">
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 20px; text-align: center;">
+                Supports JPG, PNG, WEBP.
+            </p>
+        </div>
+
+        <!-- Result Section -->
+        <div class="glass-panel result-section">
+            <div class="result-header">
+                <div class="result-title">Analysis Result</div>
+                <div class="face-count" id="face-count">0 Faces</div>
+            </div>
+            
+            <div class="image-container" id="image-container">
+                <div class="placeholder-text" id="placeholder">Waiting for image...</div>
+                <div class="loading-spinner" id="spinner"></div>
+                <img id="result-image" alt="Processed Image">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const spinner = document.getElementById('spinner');
+        const resultImg = document.getElementById('result-image');
+        const placeholder = document.getElementById('placeholder');
+        const faceCount = document.getElementById('face-count');
+
+        // Drag and Drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        dropZone.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                uploadImage(files[0]);
+            }
+        }
+
+        function uploadImage(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file.');
+                return;
+            }
+
+            // UI Loading state
+            placeholder.style.display = 'none';
+            resultImg.style.display = 'none';
+            spinner.style.display = 'block';
+            faceCount.textContent = 'Analyzing...';
+            faceCount.style.background = '#8892b0';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/detect', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                spinner.style.display = 'none';
+                
+                if (data.success) {
+                    resultImg.src = data.image_url + "?t=" + new Date().getTime(); // Prevent caching
+                    resultImg.style.display = 'block';
+                    
+                    faceCount.textContent = `${data.face_count} Face${data.face_count !== 1 ? 's' : ''}`;
+                    faceCount.style.background = 'var(--accent)';
+                } else {
+                    alert('Error: ' + data.error);
+                    placeholder.style.display = 'block';
+                    placeholder.textContent = 'Error processing image.';
+                }
+            })
+            .catch(error => {
+                spinner.style.display = 'none';
+                placeholder.style.display = 'block';
+                placeholder.textContent = 'Network error.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
